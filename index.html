@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FORGOTTEN CIRCLES — Ranking de progresso</title>
+<meta name="description" content="Ranking de progresso dos jogadores do level FORGOTTEN CIRCLES.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050a1a; --bg2:#0a1330; --card:#0d1a3d; --line:#1b2f66;
+  --cyan:#22e4ff; --blue:#2f6bff; --text:#e6f0ff; --muted:#8aa0cc;
+  --ok:#3ddc97; --err:#ff6b7a; --gold:#ffd166;
+  --display:"Chakra Petch","Trebuchet MS",system-ui,sans-serif;
+  --body:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:radial-gradient(900px 500px at 50% -10%,#10245a 0%,transparent 70%),var(--bg);
+  color:var(--text);font-family:var(--body);line-height:1.5;min-height:100vh;
+  padding:0 16px 56px;
+}
+.wrap{max-width:880px;margin:0 auto}
+header{text-align:center;padding:44px 0 26px}
+.logo{display:inline-block;width:46px;height:46px;border:4px solid var(--cyan);border-radius:50%;
+  position:relative;box-shadow:0 0 18px rgba(34,228,255,.55),inset 0 0 12px rgba(47,107,255,.6);margin-bottom:14px}
+.logo::after{content:"";position:absolute;inset:9px;border:3px solid var(--blue);border-radius:50%;opacity:.7}
+h1{font-family:var(--display);font-weight:700;margin:0;font-size:clamp(2rem,8vw,3.4rem);
+  letter-spacing:.06em;color:#fff;text-shadow:0 0 22px rgba(34,228,255,.45)}
+.sub{color:var(--muted);margin:8px auto 0;max-width:52ch}
+h2{font-family:var(--display);font-weight:700;font-size:1.25rem;margin:0 0 14px;letter-spacing:.03em}
+.panel{background:linear-gradient(180deg,var(--card),#0a1534);border:1px solid var(--line);
+  border-radius:18px;padding:22px;margin-top:18px;box-shadow:0 0 0 1px rgba(34,228,255,.04),0 10px 30px rgba(0,0,0,.35)}
+.hidden{display:none!important}
+label{display:block;color:var(--muted);font-size:.9rem;margin-bottom:6px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+input[type=text],input[type=number]{flex:1 1 180px;min-width:0;background:#060d24;color:var(--text);
+  border:1px solid var(--line);border-radius:12px;padding:13px 14px;font:inherit;font-size:1rem}
+input:focus,button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+button{font:inherit;font-weight:600;cursor:pointer;border-radius:12px;padding:13px 20px;border:1px solid transparent;
+  transition:transform .15s,box-shadow .15s,background .15s}
+.btn{background:linear-gradient(90deg,var(--blue),#1fb5ff);color:#fff;box-shadow:0 0 16px rgba(47,107,255,.45)}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 0 22px rgba(34,228,255,.55)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.ghost:hover{border-color:var(--cyan)}
+.msg{margin-top:12px;font-size:.95rem;min-height:1.2em}
+.msg.err{color:var(--err)} .msg.ok{color:var(--ok)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.who{font-family:var(--display);font-size:1.15rem}
+.who span{color:var(--cyan)}
+.status{margin-top:18px;padding:12px 14px;border-radius:12px;border:1px dashed var(--line);color:var(--muted);text-align:center}
+.status.err{color:var(--err);border-color:var(--err)}
+.list{display:grid;gap:12px}
+.card{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:center;background:#0a1534;
+  border:1px solid var(--line);border-radius:16px;padding:16px;position:relative}
+.card.first{border-color:var(--cyan);box-shadow:0 0 20px rgba(34,228,255,.2)}
+.pos{font-family:var(--display);font-size:1.6rem;font-weight:700;text-align:center;color:var(--cyan)}
+.card.first .pos{color:var(--gold)}
+.pos.none{color:var(--muted)}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.name{font-family:var(--display);font-weight:700;font-size:1.1rem}
+.pct{font-family:var(--display);font-size:1.35rem;color:var(--cyan)}
+.pct.none{font-size:.95rem;color:var(--muted);font-family:var(--body)}
+.track{height:12px;border-radius:99px;background:#050c22;border:1px solid var(--line);margin:8px 0 6px;overflow:hidden}
+.fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--cyan));
+  box-shadow:0 0 12px rgba(34,228,255,.6);transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.when{color:var(--muted);font-size:.82rem}
+.host{border-style:dashed;border-color:#3b4f8a;background:#091230}
+.host .fill{background:linear-gradient(90deg,#5b6fa8,#8aa0cc);box-shadow:none}
+.host .pct,.host .pos{color:var(--muted)}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.08em;color:var(--gold);
+  border:1px solid var(--gold);border-radius:99px;padding:2px 10px;margin-bottom:8px}
+.note{color:var(--muted);font-size:.85rem;margin:6px 0 0}
+.video{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#000}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.overlay{position:fixed;inset:0;background:rgba(2,6,20,.8);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.dialog{background:var(--card);border:1px solid var(--cyan);border-radius:18px;padding:24px;max-width:380px;width:100%;
+  box-shadow:0 0 30px rgba(34,228,255,.25)}
+.dialog p{margin:0 0 18px}
+.dialog .row{justify-content:flex-end}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-hidden="true"></div>
+    <h1>FORGOTTEN CIRCLES</h1>
+    <p class="sub">Ranking de progresso dos jogadores do level. Os recordes são atualizados em tempo real.</p>
+  </header>
+
+  <!-- Entrada -->
+  <section id="login" class="panel">
+    <h2>Quem é você? Digite seu ID abaixo!</h2>
+    <label for="idInput">Seu ID</label>
+    <div class="row">
+      <input id="idInput" type="text" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <button id="loginBtn" class="btn" type="button">Entrar</button>
+    </div>
+    <div id="loginMsg" class="msg err" role="alert"></div>
+  </section>
+
+  <!-- Publicação -->
+  <section id="publish" class="panel hidden">
+    <div class="bar">
+      <div class="who">Olá, <span id="whoName"></span></div>
+      <button id="logoutBtn" class="ghost" type="button">Sair</button>
+    </div>
+    <h2 style="margin-top:16px">Publicar progresso</h2>
+    <label for="pctInput">Porcentagem (0 a 100)</label>
+    <div class="row">
+      <input id="pctInput" type="number" inputmode="numeric" min="0" max="100" step="1">
+      <button id="pubBtn" class="btn" type="button">Publicar recorde</button>
+    </div>
+    <div id="pubMsg" class="msg" role="status"></div>
+  </section>
+
+  <!-- Ranking -->
+  <section class="panel" aria-live="polite">
+    <h2>Ranking competitivo</h2>
+    <div id="status" class="status">Carregando ranking…</div>
+    <div id="rank" class="list"></div>
+    <div id="hostBox" style="margin-top:22px" class="hidden">
+      <div id="host"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>FORGOTTEN CIRCLES SHOWCASE</h2>
+    <div class="video">
+      <iframe src="https://www.youtube-nocookie.com/embed/Z3bHw8pt984" title="FORGOTTEN CIRCLES SHOWCASE"
+        loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </section>
+</div>
+
+<!-- Confirmação -->
+<div id="confirm" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="confirmText">
+  <div class="dialog">
+    <p id="confirmText"></p>
+    <div class="row">
+      <button id="cancelBtn" class="ghost" type="button">Cancelar</button>
+      <button id="okBtn" class="btn" type="button">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA0Y58of3YOx0RCwXoJaI-Y6hrzlsovXvc",
+  authDomain: "forget-e-outros.firebaseapp.com",
+  projectId: "forget-e-outros",
+  storageBucket: "forget-e-outros.firebasestorage.app",
+  messagingSenderId: "29183293528",
+  appId: "1:29183293528:web:11fb186b6cba7eccef322d"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const ref = doc(db, "rankings", "forgotten-circles");
+
+// Participantes. Os IDs ficam apenas como hash SHA-256 (ofuscação, não segurança real).
+const PLAYERS = {
+  miguel:  { name: "Miguel Duarte", host: false, hash: "098e337b8d4e27708251dff0447bf9b8d701a1995726b115555daf7f1bcaa80a" },
+  brian:   { name: "BrianPapak",    host: false, hash: "c203effcc4edb6a687e5dc5811fe775cb8b78223986cd939710ac4e2764a1b26" },
+  matheus: { name: "Matheus S.",    host: false, hash: "ded6a687514227ff822d40bd397f30f5ae9132487ad6c846599131c740d784f0" },
+  bastos:  { name: "BASTOS",        host: true,  hash: "a2090b9620267903139cd20951eb65243628311a6799fee08e2a5865746d8d48" }
+};
+const COMPETITORS = ["miguel", "brian", "matheus"]; // ordem fixa = critério de desempate de exibição
+
+const $ = id => document.getElementById(id);
+let me = null;          // chave do participante logado
+let data = null;        // último snapshot
+let pending = null;     // percentual aguardando confirmação
+let saving = false;
+
+async function sha256(text){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+const store = {
+  get(){ try { return sessionStorage.getItem("fc-player"); } catch { return null; } },
+  set(v){ try { v ? sessionStorage.setItem("fc-player", v) : sessionStorage.removeItem("fc-player"); } catch {} }
+};
+
+/* ---------- Login ---------- */
+async function login(){
+  const msg = $("loginMsg");
+  msg.textContent = "";
+  const value = $("idInput").value.trim().toLowerCase();
+  if (!value){ msg.textContent = "ID inválido. Tente novamente."; return; }
+  if (!(window.crypto && crypto.subtle)){ msg.textContent = "Este navegador não suporta a verificação. Abra o site por HTTPS."; return; }
+  const h = await sha256(value);
+  const key = Object.keys(PLAYERS).find(k => PLAYERS[k].hash === h);
+  if (!key){ msg.textContent = "ID inválido. Tente novamente."; return; }
+  $("idInput").value = "";
+  setSession(key);
+}
+function setSession(key){
+  me = key;
+  store.set(key);
+  $("login").classList.toggle("hidden", !!key);
+  $("publish").classList.toggle("hidden", !key);
+  if (key){
+    $("whoName").textContent = PLAYERS[key].name;
+    $("pubMsg").textContent = "";
+    $("pubMsg").className = "msg";
+    $("pctInput").value = "";
+  }
+}
+function logout(){ pending = null; $("confirm").classList.add("hidden"); setSession(null); }
+
+/* ---------- Publicação ---------- */
+function parsePercent(raw){
+  const s = String(raw).trim();
+  if (!/^\d{1,3}$/.test(s)) return null;
+  const n = Number(s);
+  return n >= 0 && n <= 100 ? n : null;
+}
+function pubMsg(text, cls){ const m = $("pubMsg"); m.textContent = text; m.className = "msg " + (cls || ""); }
+
+function askConfirm(){
+  if (!me || saving) return;
+  const n = parsePercent($("pctInput").value);
+  if (n === null){ pubMsg("Informe um número inteiro de 0 a 100.", "err"); return; }
+  pending = n;
+  $("confirmText").textContent = `Confirma a publicação deste recorde? (${n}%)`;
+  $("confirm").classList.remove("hidden");
+  $("okBtn").focus();
+}
+function cancel(){ pending = null; $("confirm").classList.add("hidden"); }
+
+async function confirmSave(){
+  const n = parsePercent(pending);          // valida novamente
+  $("confirm").classList.add("hidden");
+  if (!me || n === null){ pubMsg("Valor inválido. Nada foi salvo.", "err"); return; }
+  saving = true; $("pubBtn").disabled = true; pubMsg("Salvando…");
+  try {
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 15000));
+    await Promise.race([
+      setDoc(ref, { [me]: { percent: n, updatedAt: serverTimestamp() } }, { merge: true }),
+      timeout
+    ]);
+    pubMsg(`Recorde de ${n}% publicado com sucesso.`, "ok");
+    $("pctInput").value = "";
+  } catch (e) {
+    console.error(e);
+    const denied = e && e.code === "permission-denied";
+    pubMsg(denied
+      ? "Sem permissão para salvar. Verifique as regras do Firestore. O recorde NÃO foi salvo."
+      : "Não foi possível confirmar o salvamento. Verifique sua conexão. O recorde pode não ter sido salvo.", "err");
+  } finally {
+    saving = false; pending = null; $("pubBtn").disabled = false;
+  }
+}
+
+/* ---------- Renderização ---------- */
+function readPlayer(key){
+  const p = data && data[key];
+  if (!p || typeof p.percent !== "number" || !isFinite(p.percent) || p.percent < 0 || p.percent > 100) return null;
+  return { percent: p.percent, at: p.updatedAt && p.updatedAt.toDate ? p.updatedAt.toDate() : null };
+}
+function fmtDate(d){
+  return d ? "Atualizado em " + d.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
+           : "Atualizando data…";
+}
+function esc(s){ return s.replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
+
+function cardHTML(key, pos, extraClass){
+  const rec = readPlayer(key);
+  const p = PLAYERS[key];
+  const posText = pos ? pos + "º" : "—";
+  return `<article class="card ${extraClass || ""}">
+    <div class="pos ${pos ? "" : "none"}">${posText}</div>
+    <div>
+      ${p.host ? '<span class="tag">HOST · FORA DA DISPUTA</span>' : ""}
+      <div class="top">
+        <span class="name">${esc(p.name)}</span>
+        ${rec ? `<span class="pct">${rec.percent}%</span>` : `<span class="pct none">Ainda não publicou um recorde</span>`}
+      </div>
+      <div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${rec ? rec.percent : 0}" aria-label="Progresso de ${esc(p.name)}">
+        <div class="fill" data-w="${rec ? rec.percent : 0}"></div>
+      </div>
+      <div class="when">${rec ? fmtDate(rec.at) : "Sem dados"}${p.host ? " · Progresso apenas por diversão, não conta na disputa." : ""}</div>
+    </div>
+  </article>`;
+}
+
+function render(){
+  // Ranking competitivo: maior percentual primeiro; empate = mesma posição, ordem fixa de exibição
+  const withRec = COMPETITORS.map(k => ({ k, r: readPlayer(k) })).filter(x => x.r)
+    .sort((a, b) => b.r.percent - a.r.percent);
+  const without = COMPETITORS.filter(k => !readPlayer(k));
+  let html = "", pos = 0;
+  withRec.forEach((x, i) => {
+    if (i === 0 || x.r.percent < withRec[i - 1].r.percent) pos = i + 1;
+    html += cardHTML(x.k, pos, pos === 1 ? "first" : "");
+  });
+  without.forEach(k => { html += cardHTML(k, null); });
+  $("rank").innerHTML = html;
+
+  $("host").innerHTML = cardHTML("bastos", null, "host");
+  $("hostBox").classList.remove("hidden");
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll(".fill").forEach(el => { el.style.width = el.dataset.w + "%"; });
+  }));
+}
+
+/* ---------- Firebase em tempo real ---------- */
+let firstSnap = false;
+const loadTimer = setTimeout(() => {
+  if (!firstSnap) showError("Não foi possível carregar o ranking. Verifique sua conexão e recarregue a página.");
+}, 12000);
+
+function showError(text){
+  const s = $("status"); s.textContent = text; s.className = "status err"; s.classList.remove("hidden");
+}
+onSnapshot(ref, snap => {
+  firstSnap = true; clearTimeout(loadTimer);
+  data = snap.exists() ? snap.data() : {};
+  const s = $("status");
+  if (!snap.exists() || !Object.keys(data).length){
+    s.textContent = "Nenhum recorde publicado ainda."; s.className = "status"; s.classList.remove("hidden");
+  } else {
+    s.classList.add("hidden");
+  }
+  render();
+}, err => {
+  console.error(err);
+  firstSnap = true; clearTimeout(loadTimer);
+  showError(err && err.code === "permission-denied"
+    ? "Sem permissão para ler o ranking. Verifique as regras do Firestore."
+    : "Erro ao carregar o ranking. Tente novamente em instantes.");
+  data = null; render();
+});
+
+/* ---------- Eventos ---------- */
+$("loginBtn").addEventListener("click", login);
+$("idInput").addEventListener("keydown", e => { if (e.key === "Enter") login(); });
+$("logoutBtn").addEventListener("click", logout);
+$("pubBtn").addEventListener("click", askConfirm);
+$("pctInput").addEventListener("keydown", e => { if (e.key === "Enter") askConfirm(); });
+$("cancelBtn").addEventListener("click", cancel);
+$("okBtn").addEventListener("click", confirmSave);
+document.addEventListener("keydown", e => { if (e.key === "Escape") cancel(); });
+
+const saved = store.get();
+if (saved && PLAYERS[saved]) setSession(saved);
+</script>
+</body>
+</html>
